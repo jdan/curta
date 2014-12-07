@@ -17,11 +17,12 @@ var util = require("util");
 
 function Curta() {
     this.state = Immutable.Map({
-        settingRegister: 0,
-        countingRegister: 0,
-        resultRegister: 0,
+        settingRegisters: 0,
+        countingRegisters: 0,
+        resultRegisters: 0,
 
-        carriageSetting: 1
+        carriageSetting: 1,
+        crankDown: true
     });
 }
 
@@ -34,7 +35,7 @@ Curta.prototype.setCarriage = function(n) {
         throw new Error("Carriage setting must be between (1) through (6)");
     }
 
-    this.state.set("carriageSetting", n);
+    this.state = this.state.set("carriageSetting", n);
 };
 
 /**
@@ -75,32 +76,46 @@ Curta.prototype.setRegister = function(register, value) {
             "Setting register value must be between (0) through (9)");
     }
 
-    var registers = this._toDigitArray(this.state.get("settingRegister"),
+    var registers = this._toDigitArray(this.state.get("settingRegisters"),
                                        Curta.NUM_SETTING_REGISTERS);
 
     registers = registers.set(register - 1, value);
 
-    this.state = this.state.set("settingRegister", this._toDecimal(registers));
+    this.state = this.state.set("settingRegisters", this._toDecimal(registers));
 };
 
 Curta.prototype.readCarriage = function() {
     return this.state.get("carriageSetting");
 };
 
-Curta.prototype.readSetting = function(register) {
-    if (register === undefined) {
-        return this.state.get("settingRegister");
-    } else {
-        if (register < 1 || register > Curta.NUM_SETTING_REGISTERS) {
-            throw new Error(
-                "Setting register must be a value between (1) through (" +
-                Curta.NUM_SETTING_REGISTERS + ")");
-        }
+/**
+ * General function to read out an entire series of registers or a particular
+ * register.
+ */
+Curta.prototype._readRegistersFn = function(key, capacity) {
+    return function(register) {
+        if (register === undefined) {
+            return this.state.get(key);
+        } else {
+            if (register < 1 || register > capacity) {
+                throw new Error(
+                    "Setting register must be a value between (1) through (" +
+                    capacity + ")");
+            }
 
-        var digits = this._toDigitArray(this.state.get("settingRegister"),
-                                        Curta.NUM_SETTING_REGISTERS);
-        return digits.get(register - 1);
-    }
+            var digits = this._toDigitArray(this.state.get(key), capacity);
+            return digits.get(register - 1);
+        }
+    };
 };
+
+Curta.prototype.readSetting = Curta.prototype._readRegistersFn(
+    "settingRegisters", Curta.NUM_SETTING_REGISTERS);
+
+Curta.prototype.readCounting = Curta.prototype._readRegistersFn(
+    "countingRegisters", Curta.NUM_COUNTING_REGISTERS);
+
+Curta.prototype.readResult = Curta.prototype._readRegistersFn(
+    "resultRegisters", Curta.NUM_RESULT_REGISTERS);
 
 module.exports = Curta;

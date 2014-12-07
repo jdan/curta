@@ -1,7 +1,29 @@
 var assert = require("assert");
 var Curta = require("./");
 
-describe("Registers", function() {
+describe("carraige", function() {
+    var curta = new Curta();
+
+    it("should return 1 initially", function() {
+        assert.equal(1, curta.readCarriage());
+    });
+
+    it("should be able to change", function() {
+        curta.setCarriage(2);
+        assert.equal(2, curta.readCarriage());
+    });
+
+    it("should error when set to an invalid slot", function() {
+        assert.throws(function() {
+            curta.setCarriage(-1);
+        });
+        assert.throws(function() {
+            curta.setCarriage(7);
+        });
+    });
+});
+
+describe("registers", function() {
     var curta = new Curta();
 
     it("should return 0 initially", function() {
