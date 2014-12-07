@@ -26,10 +26,39 @@ function Curta() {
     });
 }
 
+
 Curta.NUM_SETTING_REGISTERS = 8;
 Curta.NUM_COUNTING_REGISTERS = 6;
 Curta.NUM_RESULT_REGISTERS = 11;
 
+
+/**
+ * Lifts the crank.
+ */
+Curta.prototype.liftCrank = function() {
+    this.state = this.state.set('crankDown', false);
+};
+
+
+/**
+ * Lowers the crank.
+ */
+Curta.prototype.lowerCrank = function() {
+    this.state = this.state.set('crankDown', true);
+};
+
+
+/**
+ * Reads the carriage setting.
+ */
+Curta.prototype.readCarriage = function() {
+    return this.state.get("carriageSetting");
+};
+
+
+/**
+ * Sets the carriage setting.
+ */
 Curta.prototype.setCarriage = function(n) {
     if (n < 1 || n > 6) {
         throw new Error("Carriage setting must be between (1) through (6)");
@@ -37,6 +66,7 @@ Curta.prototype.setCarriage = function(n) {
 
     this.state = this.state.set("carriageSetting", n);
 };
+
 
 /**
  * Converts a number to an immutable digit array of a given size.
@@ -49,6 +79,7 @@ Curta.prototype._toDigitArray = function(n, size) {
 
     return Immutable.List.of.apply(Immutable.List, digits);
 };
+
 
 /**
  * Converts an immutable digit array to a number.
@@ -64,29 +95,6 @@ Curta.prototype._toDecimal = function(digitArray) {
     return result;
 };
 
-Curta.prototype.setRegister = function(register, value) {
-    if (register < 1 || register > Curta.NUM_SETTING_REGISTERS) {
-        throw new Error(
-            "Setting register must be a value between (1) through (" +
-            Curta.NUM_SETTING_REGISTERS + ")");
-    }
-
-    if (value < 0 || value > 9) {
-        throw new Error(
-            "Setting register value must be between (0) through (9)");
-    }
-
-    var registers = this._toDigitArray(this.state.get("settingRegisters"),
-                                       Curta.NUM_SETTING_REGISTERS);
-
-    registers = registers.set(register - 1, value);
-
-    this.state = this.state.set("settingRegisters", this._toDecimal(registers));
-};
-
-Curta.prototype.readCarriage = function() {
-    return this.state.get("carriageSetting");
-};
 
 /**
  * General function to read out an entire series of registers or a particular
@@ -109,13 +117,73 @@ Curta.prototype._readRegistersFn = function(key, capacity) {
     };
 };
 
+
+/**
+ * Reads the setting registers.
+ */
 Curta.prototype.readSetting = Curta.prototype._readRegistersFn(
     "settingRegisters", Curta.NUM_SETTING_REGISTERS);
 
+
+/**
+ * Reads the counting registers.
+ */
 Curta.prototype.readCounting = Curta.prototype._readRegistersFn(
     "countingRegisters", Curta.NUM_COUNTING_REGISTERS);
 
+
+/**
+ * Reads the result registers.
+ */
 Curta.prototype.readResult = Curta.prototype._readRegistersFn(
     "resultRegisters", Curta.NUM_RESULT_REGISTERS);
+
+
+/**
+ * General function to set a given register using a particular key and
+ * capacity of the register group.
+ */
+Curta.prototype._setRegisterFn = function(key, capacity) {
+    return function(register, value) {
+        if (register < 1 || register > capacity) {
+            throw new Error(
+                "Setting register must be a value between (1) through (" +
+                Curta.NUM_SETTING_REGISTERS + ")");
+        }
+
+        if (value < 0 || value > 9) {
+            throw new Error(
+                "Setting register value must be between (0) through (9)");
+        }
+
+        var registers = this._toDigitArray(this.state.get(key), capacity)
+            .set(register - 1, value);
+
+        this.state = this.state.set(key, this._toDecimal(registers));
+    };
+};
+
+
+/**
+ * Sets a given setting register to a given value.
+ * The naming for this one is a little convoluted.
+ */
+Curta.prototype.setRegister = Curta.prototype._setRegisterFn(
+    "settingRegisters", Curta.NUM_SETTING_REGISTERS);
+
+
+/**
+ * Sets a given counting register to a given value.
+ */
+Curta.prototype._setCountingRegister = Curta.prototype._setRegisterFn(
+    "countingRegisters", Curta.NUM_COUNTING_REGISTERS);
+
+
+/**
+ * Sets a given result register to a given value.
+ */
+Curta.prototype._setResultRegister = Curta.prototype._setRegisterFn(
+    "resultRegisters", Curta.NUM_RESULT_REGISTERS);
+
 
 module.exports = Curta;
