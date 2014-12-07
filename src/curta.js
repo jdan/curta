@@ -1,19 +1,6 @@
 var Immutable = require("immutable");
 var util = require("util");
 
-/**
- * turn(n)
- * liftCrank
- * lowerCrank
- *
- * read/readResult(n?)
- * readCounter(n?)
- * readSetting(n?)
- * readCarriage
- *
- * setCarriage(n (1-6))
- * setRegister(n (1-8), value (0-9))
- */
 
 function Curta() {
     this.state = Immutable.Map({
@@ -32,11 +19,16 @@ Curta.NUM_COUNTING_REGISTERS = 6;
 Curta.NUM_RESULT_REGISTERS = 11;
 
 
+Curta.prototype.setState = function(state) {
+    this.state = this.state.merge(state);
+};
+
+
 /**
  * Lifts the crank.
  */
 Curta.prototype.liftCrank = function() {
-    this.state = this.state.set('crankDown', false);
+    this.setState({ crankDown: false });
 };
 
 
@@ -44,7 +36,7 @@ Curta.prototype.liftCrank = function() {
  * Lowers the crank.
  */
 Curta.prototype.lowerCrank = function() {
-    this.state = this.state.set('crankDown', true);
+    this.setState({ crankDown: true });
 };
 
 
@@ -64,7 +56,7 @@ Curta.prototype.setCarriage = function(n) {
         throw new Error("Carriage setting must be between (1) through (6)");
     }
 
-    this.state = this.state.set("carriageSetting", n);
+    this.setState({ carriageSetting: n });
 };
 
 
@@ -159,7 +151,9 @@ Curta.prototype._setRegisterFn = function(key, capacity) {
         var registers = this._toDigitArray(this.state.get(key), capacity)
             .set(register - 1, value);
 
-        this.state = this.state.set(key, this._toDecimal(registers));
+        var state = {};
+        state[key] = this._toDecimal(registers);
+        this.setState(state);
     };
 };
 
