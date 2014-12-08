@@ -61,6 +61,33 @@ Curta.prototype.lowerCrank = function() {
 
 
 /**
+ * Clears the counting registers.
+ */
+Curta.prototype.clearCounting = function() {
+    this.setState({ countingRegisters: 0 });
+};
+
+
+/**
+ * Clears the result registers.
+ */
+Curta.prototype.clearResult = function() {
+    this.setState({ resultRegisters: 0 });
+};
+
+
+/**
+ * Clears both the counting and result registers.
+ */
+Curta.prototype.clear = function() {
+    this.setState({
+        countingRegisters: 0,
+        resultRegisters: 0
+    });
+};
+
+
+/**
  * Reads the carriage setting.
  */
 Curta.prototype.readCarriage = function() {
