@@ -132,54 +132,33 @@ Curta.prototype.readResult = Curta.prototype._readRegistersFn(
 
 
 /**
- * General function to set a given register using a particular key and
- * capacity of the register group.
+ * Sets a given setting register to a given value.
+ * The naming for this one is a little convoluted.
  */
-Curta.prototype._setRegisterFn = function(key, capacity) {
-    return function(register, value) {
-        if (register < 1 || register > capacity) {
-            throw new Error(
-                "Setting register must be a value between (1) through (" +
-                Curta.NUM_SETTING_REGISTERS + ")");
-        }
+Curta.prototype.setRegister = function(register, value) {
+    if (register < 1 || register > Curta.NUM_SETTING_REGISTERS) {
+        throw new Error(
+            "Setting register must be a value between (1) through (" +
+            Curta.NUM_SETTING_REGISTERS + ")");
+    }
 
-        if (value < 0 || value > 9) {
-            throw new Error(
-                "Setting register value must be between (0) through (9)");
-        }
+    if (value < 0 || value > 9) {
+        throw new Error(
+            "Setting register value must be between (0) through (9)");
+    }
 
-        var registers = this._toDigitArray(this.state.get(key), capacity)
-            .set(register - 1, value);
+    var registers = this._toDigitArray(this.state.get("settingRegisters"), Curta.NUM_SETTING_REGISTERS)
+        .set(register - 1, value);
 
-        var state = {};
-        state[key] = this._toDecimal(registers);
-        this.setState(state);
-    };
+    var state = {};
+    state["settingRegisters"] = this._toDecimal(registers);
+    this.setState(state);
 };
 
 
 /**
- * Sets a given setting register to a given value.
- * The naming for this one is a little convoluted.
+ * Turns the curta
  */
-Curta.prototype.setRegister = Curta.prototype._setRegisterFn(
-    "settingRegisters", Curta.NUM_SETTING_REGISTERS);
-
-
-/**
- * Sets a given counting register to a given value.
- */
-Curta.prototype._setCountingRegister = Curta.prototype._setRegisterFn(
-    "countingRegisters", Curta.NUM_COUNTING_REGISTERS);
-
-
-/**
- * Sets a given result register to a given value.
- */
-Curta.prototype._setResultRegister = Curta.prototype._setRegisterFn(
-    "resultRegisters", Curta.NUM_RESULT_REGISTERS);
-
-
 Curta.prototype.turn = function(turns) {
     if (turns === undefined) {
         turns = 1;
