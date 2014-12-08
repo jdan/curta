@@ -120,4 +120,48 @@ describe("turning", function() {
         curta.turn(3);
         assert.equal(7500, curta.readResult());
     });
+
+    it("should error if we specify an invalid crank amount", function() {
+        var curta = new Curta();
+        assert.throws(function() {
+            curta.turn(0);
+        });
+        assert.throws(function() {
+            curta.turn(-1);
+        });
+    });
+
+    it("should subtract if the crank is up", function() {
+        var curta = new Curta();
+        curta.setRegister(1, 4);
+        curta.turn(4);
+        assert.equal(16, curta.readResult());
+
+        curta.liftCrank();
+        curta.turn();
+        assert.equal(12, curta.readResult());
+
+        curta.lowerCrank();
+        curta.turn(2);
+        assert.equal(20, curta.readResult());
+    });
+
+    it("should handle underflows and overflows", function() {
+        var curta = new Curta();
+        curta.liftCrank();
+        curta.turn();
+        assert.equal(999999, curta.readCounting());
+
+        curta.lowerCrank();
+        curta.turn();
+        assert.equal(0, curta.readCounting());
+
+        curta.liftCrank();
+        curta.setCarriage(2);
+        curta.setRegister(1, 5);
+        curta.turn();
+
+        assert.equal(999990, curta.readCounting());
+        assert.equal(99999999950, curta.readResult());
+    });
 });

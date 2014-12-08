@@ -19,7 +19,27 @@ Curta.NUM_COUNTING_REGISTERS = 6;
 Curta.NUM_RESULT_REGISTERS = 11;
 
 
+/**
+ * Set the state of the curta by merging with the internal ImmutableJS map.
+ * This method also handles underflows.
+ */
 Curta.prototype.setState = function(state) {
+    var counting = state.countingRegisters;
+    var result = state.resultRegisters;
+    var offset;
+
+    if (counting) {
+        // Handles both overflows and underflows
+        offset = Math.pow(10, Curta.NUM_COUNTING_REGISTERS);
+        state.countingRegisters = (counting + offset) % offset;
+    }
+
+    if (result) {
+        // Handles both overflows and underflows
+        offset = Math.pow(10, Curta.NUM_RESULT_REGISTERS);
+        state.resultRegisters = (result + offset) % offset;
+    }
+
     this.state = this.state.merge(state);
 };
 
@@ -168,7 +188,8 @@ Curta.prototype.turn = function(turns) {
         throw new Error("You must turn at least once");
     }
 
-    var turnWeight = turns * Math.pow(10, this.readCarriage() - 1);
+    var multiplier = this.state.get("crankDown") ? 1 : -1;
+    var turnWeight = turns * Math.pow(10, this.readCarriage()-1) * multiplier;
     var turnValue = this.readSetting() * turnWeight;
 
     var counting = this.readCounting();
