@@ -88,7 +88,7 @@ Clears the result registers.
 
 Clears both the counting and result registers.
 
-### `curta.readCarriage`
+### `curta.readCarriage()`
 
 Reads the carriage setting, which determines the exponent of 10 we add
 to the counter.
@@ -117,7 +117,7 @@ Sets the given setting register to a particular value.
 
 ## Testing
 
-```sh
+```
 npm install
 npm test
 ```
