@@ -81,10 +81,10 @@ describe("clearing", function() {
     it("should clear the counting registers", function() {
         var curta = new Curta();
         curta.turn(5);
-        assert.equal(5, curta.readCounting());
+        assert.equal(5, curta.readCounter());
 
         curta.clearCounting();
-        assert.equal(0, curta.readCounting());
+        assert.equal(0, curta.readCounter());
     });
 
     it("should clear the result registers", function() {
@@ -97,18 +97,18 @@ describe("clearing", function() {
         assert.equal(0, curta.readResult());
 
         // Make sure the counting registers have not been cleared
-        assert.equal(5, curta.readCounting());
+        assert.equal(5, curta.readCounter());
     });
 
     it("should clear the counting and result registers", function() {
         var curta = new Curta();
         curta.setRegister(1, 1);
         curta.turn(5);
-        assert.equal(5, curta.readCounting());
+        assert.equal(5, curta.readCounter());
         assert.equal(5, curta.readResult());
 
         curta.clear();
-        assert.equal(0, curta.readCounting());
+        assert.equal(0, curta.readCounter());
         assert.equal(0, curta.readResult());
     });
 });
@@ -117,24 +117,24 @@ describe("turning", function() {
     it("should count 1 by default", function() {
         var curta = new Curta();
         curta.turn();
-        assert.equal(1, curta.readCounting());
+        assert.equal(1, curta.readCounter());
     });
 
     it("should count based on the carriage setting", function() {
         var curta = new Curta();
         curta.setCarriage(2);
         curta.turn();
-        assert.equal(10, curta.readCounting());
+        assert.equal(10, curta.readCounter());
     });
 
     it("should be able to turn multiple times", function() {
         var curta = new Curta();
         curta.turn(2);
-        assert.equal(2, curta.readCounting());
+        assert.equal(2, curta.readCounter());
 
         curta.setCarriage(2);
         curta.turn(5);
-        assert.equal(52, curta.readCounting());
+        assert.equal(52, curta.readCounter());
     });
 
     it("should not affect the result", function() {
@@ -186,11 +186,11 @@ describe("turning", function() {
         var curta = new Curta();
         curta.liftCrank();
         curta.turn();
-        assert.equal(999999, curta.readCounting());
+        assert.equal(999999, curta.readCounter());
 
         curta.lowerCrank();
         curta.turn();
-        assert.equal(0, curta.readCounting());
+        assert.equal(0, curta.readCounter());
 
         curta.clear();
         curta.liftCrank();
@@ -198,7 +198,7 @@ describe("turning", function() {
         curta.setRegister(1, 5);
         curta.turn();
 
-        assert.equal(999990, curta.readCounting());
+        assert.equal(999990, curta.readCounter());
         assert.equal(99999999950, curta.readResult());
     });
 });

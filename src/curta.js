@@ -167,7 +167,7 @@ Curta.prototype.readSetting = Curta.prototype._readRegistersFn(
 /**
  * Reads the counting registers.
  */
-Curta.prototype.readCounting = Curta.prototype._readRegistersFn(
+Curta.prototype.readCounter = Curta.prototype._readRegistersFn(
     "countingRegisters", Curta.NUM_COUNTING_REGISTERS);
 
 
@@ -176,6 +176,7 @@ Curta.prototype.readCounting = Curta.prototype._readRegistersFn(
  */
 Curta.prototype.readResult = Curta.prototype._readRegistersFn(
     "resultRegisters", Curta.NUM_RESULT_REGISTERS);
+Curta.prototype.result = Curta.prototype.readResult;
 
 
 /**
@@ -219,7 +220,7 @@ Curta.prototype.turn = function(turns) {
     var turnWeight = turns * Math.pow(10, this.readCarriage()-1) * multiplier;
     var turnValue = this.readSetting() * turnWeight;
 
-    var counting = this.readCounting();
+    var counting = this.readCounter();
     var result = this.readResult();
 
     this.setState({
