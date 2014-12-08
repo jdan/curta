@@ -180,4 +180,26 @@ Curta.prototype._setResultRegister = Curta.prototype._setRegisterFn(
     "resultRegisters", Curta.NUM_RESULT_REGISTERS);
 
 
+Curta.prototype.turn = function(turns) {
+    if (turns === undefined) {
+        turns = 1;
+    }
+
+    if (turns < 1) {
+        throw new Error("You must turn at least once");
+    }
+
+    var turnWeight = turns * Math.pow(10, this.readCarriage() - 1);
+    var turnValue = this.readSetting() * turnWeight;
+
+    var counting = this.readCounting();
+    var result = this.readResult();
+
+    this.setState({
+        countingRegisters: counting + turnWeight,
+        resultRegisters: result + turnValue
+    });
+};
+
+
 module.exports = Curta;

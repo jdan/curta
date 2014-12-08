@@ -76,3 +76,48 @@ describe("registers", function() {
         });
     });
 });
+
+describe("turning", function() {
+    it("should count 1 by default", function() {
+        var curta = new Curta();
+        curta.turn();
+        assert.equal(1, curta.readCounting());
+    });
+
+    it("should count based on the carriage setting", function() {
+        var curta = new Curta();
+        curta.setCarriage(2);
+        curta.turn();
+        assert.equal(10, curta.readCounting());
+    });
+
+    it("should be able to turn multiple times", function() {
+        var curta = new Curta();
+        curta.turn(2);
+        assert.equal(2, curta.readCounting());
+
+        curta.setCarriage(2);
+        curta.turn(5);
+        assert.equal(52, curta.readCounting());
+    });
+
+    it("should not affect the result", function() {
+        var curta = new Curta();
+        curta.turn();
+        assert.equal(0, curta.readResult());
+    });
+
+    it("should change the result if we change the setting registers", function() {
+        var curta = new Curta();
+        curta.setRegister(1, 5);
+        curta.turn(4);
+        assert.equal(20, curta.readResult());
+
+        curta = new Curta();
+        curta.setRegister(1, 5);
+        curta.setRegister(2, 2);
+        curta.setCarriage(3);
+        curta.turn(3);
+        assert.equal(7500, curta.readResult());
+    });
+});
