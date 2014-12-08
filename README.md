@@ -115,6 +115,13 @@ Reads the value of the result registers.
 
 Sets the given setting register to a particular value.
 
+## Testing
+
+```sh
+npm install
+npm test
+```
+
 ## License
 
 MIT © [Jordan Scales](http://jordanscales.com)
