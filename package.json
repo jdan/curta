@@ -1,13 +1,30 @@
 {
+  "name": "curta",
+  "version": "0.0.1",
+  "description": "Simulator for a Curta Type I mechanical calculator",
   "main": "src/curta.js",
   "dependencies": {
     "immutable": "^3.3.0"
   },
   "devDependencies": {
-    "mocha": "^2.0.1",
-    "react-tools": "^0.12.1"
+    "mocha": "^2.0.1"
   },
   "scripts": {
     "test": "mocha"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jdan/curta.git"
+  },
+  "keywords": [
+    "math",
+    "curta",
+    "calculator"
+  ],
+  "author": "Jordan Scales <scalesjordan@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jdan/curta/issues"
+  },
+  "homepage": "https://github.com/jdan/curta"
 }
